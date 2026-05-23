@@ -14,7 +14,11 @@ const initialState = {
   // quizStatus : loading, ready, active, finished, error
   status: 'loading',
   // index for showing i-th question 
-  index: 0
+  index: 0,
+  // index for getting the answer
+  answer: null,
+  // points to update on a correct answer
+  points: 0
 }
 
 function reducer(state, action){
@@ -29,6 +33,14 @@ function reducer(state, action){
 
     case 'startQuiz':
       return {...state, status: 'active'}
+
+    case 'newAnswer':
+      // getting current question for setting points
+      const question = state.questions.at(state.index);
+
+      return {...state, 
+        answer: action.payload, 
+        points: action.payload === question.correctOption ? state.points + question.points : state.points}
     
     default: 
       throw new Error('Unknown action');
@@ -41,7 +53,7 @@ export default function App(){
   // const [state, dispatch] = useReducer(reducer, initialState)
 
   // destructuring state
-  const [{questions, status, index}, dispatch] = useReducer(reducer, initialState)
+  const [{questions, status, index, answer}, dispatch] = useReducer(reducer, initialState)
 
 
   const numQuestions = questions.length;
@@ -67,7 +79,10 @@ export default function App(){
 
       {status === 'ready' && <StartScreen dispatch={dispatch} numQuestions={numQuestions}/>}
 
-      {status === 'active' && <Question  question={questions[index]}/>}
+      {status === 'active' && <Question question={questions[index]}
+      dispatch={dispatch}
+      answer={answer}
+      />}
     </Main>
   </div>
 
