@@ -1,5 +1,4 @@
 export default function Progress({index, numQuestions, points, maxPossiblePoints, answer}){
-    console.log(answer)
     return (
         <>
         <header className="progress">
